@@ -1,8 +1,8 @@
 <form class="card" [formGroup]="form" (ngSubmit)="submit()">
   <h2>Войти в панель администратора</h2>
-  <div
-    *ngIf="auth.error$"
-    class="alert alert-danger"></div>
+  <div *ngIf="auth.error$" class="alert alert-danger">
+    {{ auth.error$ }}
+  </div>
   <div
     [ngClass]="{
       invalid: form.get('email').touched && form.get('email').invalid

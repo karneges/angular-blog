@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { FbAuthResponse, User } from '../../../shared/interfaces';
-import {Observable, Subject, throwError} from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { catchError, tap } from 'rxjs/operators';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
   constructor(private http: HttpClient) {}
-  public error$: Subject<string> = new Subject<string>();
-
+  public error$: string;
   get token(): string {
     const expData = new Date(localStorage.getItem('fb-token-expiresIn'));
     if (new Date() > expData) {
@@ -33,19 +34,36 @@ export class AuthService {
   logout() {
     this.setToken(null);
   }
+  //   handleError(error: HttpErrorResponse) {
+  // //     const { message } = error.error.error;
+  // //     switch (message) {
+  // //   case 'EMAIL_NOT_FOUND':
+  // //     this.error$.next('Не существующий email');
+  // //     break;
+  // //   case 'INVALID_EMAIL':
+  // //     this.error$.next('Неверный email');
+  // //     break;
+  // //   case 'INVALID_PASSWORD':
+  // //     this.error$.next('Неверный пароль');
+  // //     break;
+  // // }
+  // //     console.log(message);
+  // //
+  // //     return throwError(error);
+  // //   }
   handleError(error: HttpErrorResponse) {
     const { message } = error.error.error;
     switch (message) {
-  case 'EMAIL_NOT_FOUND':
-    this.error$.next('Не существующий email');
-    break;
-  case 'INVALID_EMAIL':
-    this.error$.next('Неверный email');
-    break;
-  case 'INVALID_PASSWORD':
-    this.error$.next('Неверный пароль');
-    break;
-}
+      case 'EMAIL_NOT_FOUND':
+        this.error$ = 'Не существующий email';
+        break;
+      case 'INVALID_EMAIL':
+        this.error$ = 'Неверный email';
+        break;
+      case 'INVALID_PASSWORD':
+        this.error$ = 'Неверный пароль';
+        break;
+    }
     console.log(message);
 
     return throwError(error);
