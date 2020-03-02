@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { AlertServices } from '../../services/alert.services';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-alert',
@@ -6,10 +8,21 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./alert.component.scss']
 })
 export class AlertComponent implements OnInit {
-  @Input() type: string;
-  @Input() text: string;
+  @Input() delay = 5000;
+  type: string;
+  text: string;
 
-  constructor() {}
+  constructor(public alertServices: AlertServices) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.alertServices.alert$.subscribe(alert => {
+      this.text = alert.text;
+      this.type = alert.type;
+
+      const timeout = setTimeout(() => {
+        clearInterval(timeout);
+        this.text = '';
+      }, this.delay);
+    });
+  }
 }
